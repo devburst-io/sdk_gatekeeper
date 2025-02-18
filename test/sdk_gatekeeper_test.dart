@@ -1,5 +1,5 @@
 import 'package:sdk_gatekeeper/sdk_gatekeeper.dart';
-import 'package:sdk_gatekeeper/src/entities/create_user_dto.dart';
+import 'package:sdk_gatekeeper/src/entities/user_role.dart';
 import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 import 'package:test/test.dart';
 
@@ -21,7 +21,7 @@ void main() {
           name: 'test',
           email: email,
           password: password,
-          role: 'common',
+          role: UserRole.common,
         ),
       );
       expect(result.id, isNotEmpty);
@@ -34,7 +34,7 @@ void main() {
             name: 'test',
             email: 'test+${DateTime.now().millisecondsSinceEpoch}@test.com',
             password: password,
-            role: 'admin',
+            role: UserRole.admin,
           ),
         ),
         throwsA(isA<GatekeeperException>()),
@@ -135,7 +135,6 @@ void main() {
         email: 'null+${DateTime.now().millisecondsSinceEpoch}',
         password: 'null',
         name: 'null',
-        role: 'null',
       );
 
       expect(
