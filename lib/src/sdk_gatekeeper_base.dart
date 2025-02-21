@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:encrypt/encrypt.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:sdk_gatekeeper/src/entities/create_user_dto.dart';
 import 'package:sdk_gatekeeper/src/entities/token_response.dart';
@@ -30,7 +31,7 @@ class SdkGatekeeperBase {
     if (response.statusCode == HttpStatus.created) {
       return TokenResponse.fromJson(json.decode(response.body));
     }
-    throw _handleErrorCode(response.statusCode);
+    throw _handleErrorCode(response);
   }
 
   Future<void> forgotPassword(String email) async {
@@ -45,7 +46,7 @@ class SdkGatekeeperBase {
       },
     );
     if (response.statusCode != HttpStatus.noContent) {
-      throw _handleErrorCode(response.statusCode);
+      throw _handleErrorCode(response);
     }
   }
 
@@ -69,7 +70,7 @@ class SdkGatekeeperBase {
       },
     );
     if (response.statusCode != HttpStatus.noContent) {
-      throw _handleErrorCode(response.statusCode);
+      throw _handleErrorCode(response);
     }
   }
 
@@ -87,7 +88,7 @@ class SdkGatekeeperBase {
     if (response.statusCode == HttpStatus.created) {
       return TokenResponse.fromJson(json.decode(response.body));
     }
-    throw _handleErrorCode(response.statusCode);
+    throw _handleErrorCode(response);
   }
 
   Future<Pagination<UserEntity>> getAllUsers(String token) async {
@@ -107,7 +108,7 @@ class SdkGatekeeperBase {
         (json) => UserEntity.fromJson(json),
       );
     }
-    throw _handleErrorCode(response.statusCode);
+    throw _handleErrorCode(response);
   }
 
   Future<UserEntity> register(CreateUser createUser) async {
@@ -123,7 +124,7 @@ class SdkGatekeeperBase {
     if (response.statusCode == HttpStatus.created) {
       return UserEntity.fromJson(json.decode(response.body));
     }
-    throw _handleErrorCode(response.statusCode);
+    throw _handleErrorCode(response);
   }
 
   Future<UserEntity> getProfile(String token) async {
@@ -140,12 +141,13 @@ class SdkGatekeeperBase {
     if (response.statusCode == HttpStatus.ok) {
       return UserEntity.fromJson(json.decode(response.body));
     }
-    throw _handleErrorCode(response.statusCode);
+    throw _handleErrorCode(response);
   }
 
-  Exception _handleErrorCode(int statusCode) {
-    log('Error code: $statusCode');
-    return GatekeeperException('Error code: $statusCode');
+  Exception _handleErrorCode(Response response) {
+    log('Error code: ${response.statusCode}');
+    log('Error body: ${response.body}');
+    return GatekeeperException('Error code: ${response.statusCode}');
   }
 
   Future<String> _encriptede(String password) async {
@@ -170,6 +172,6 @@ class SdkGatekeeperBase {
     if (response.statusCode == HttpStatus.ok) {
       return response.body;
     }
-    throw _handleErrorCode(response.statusCode);
+    throw _handleErrorCode(response);
   }
 }

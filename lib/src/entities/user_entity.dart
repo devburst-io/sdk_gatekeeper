@@ -23,4 +23,14 @@ class UserEntity {
           json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, String?>{
+      'id': id,
+      'email': email,
+      'createdAt': createdAt.toString(),
+      'updatedAt': updatedAt.toString(),
+      'deletedAt': deletedAt?.toString(),
+    };
+  }
 }

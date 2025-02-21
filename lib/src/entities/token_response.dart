@@ -21,4 +21,13 @@ class TokenResponse {
       data: UserEntity.fromJson(json['data']),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'token': token,
+      'refreshToken': refreshToken,
+      'tokenExpires': tokenExpires,
+      'data': data.toMap(),
+    };
+  }
 }

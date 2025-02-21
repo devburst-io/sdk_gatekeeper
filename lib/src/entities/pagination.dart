@@ -23,9 +23,9 @@ class Pagination<T> {
 
     return Pagination(
       items: itemsList,
-      page: json['page'],
-      pageSize: json['pageSize'],
-      pageCount: json['pageCount'],
+      page: int.tryParse(json['page'].toString()) ?? 0,
+      pageSize: int.tryParse(json['pageSize'].toString()) ?? 0,
+      pageCount: int.tryParse(json['pageCount'].toString()) ?? 0,
       hasNext: json['hasNext'],
       hasPrevious: json['hasPrevious'],
     );
