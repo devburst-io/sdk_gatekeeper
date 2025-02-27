@@ -3,9 +3,9 @@ import 'package:sdk_gatekeeper/src/entities/member_entity.dart';
 class OrganizationEntity {
   final String id;
   final String name;
-  final String description;
-  final String createdAt;
-  final String updatedAt;
+  final String? description;
+  final String? createdAt;
+  final String? updatedAt;
   final String? deletedAt;
   final List<MemberEntity> members;
 
@@ -40,7 +40,7 @@ class OrganizationEntity {
       updatedAt: map['updatedAt'],
       deletedAt: map['deletedAt'],
       members:
-          (map['members'] as List)
+          ((map['members'] ?? []) as List)
               .map<MemberEntity>(
                 (x) => MemberEntity.fromMap(Map<String, dynamic>.from(x)),
               )
