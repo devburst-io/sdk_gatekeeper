@@ -121,14 +121,17 @@ class SdkGatekeeperBase {
     throw _handleErrorCode(response);
   }
 
-  Future<OrganizationEntity> getOrganization(String token) async {
+  Future<Pagination<OrganizationEntity>> getOrganization(String token) async {
     final url = Uri.http(authority, '/organization');
     final response = await http.get(
       url,
       headers: {'Authorization': 'Bearer $token'},
     );
     if (response.statusCode == HttpStatus.ok) {
-      return OrganizationEntity.fromMap(json.decode(response.body));
+      return Pagination.fromJson(
+        json.decode(response.body),
+        (v) => OrganizationEntity.fromMap(v),
+      );
     }
     throw _handleErrorCode(response);
   }
