@@ -121,8 +121,15 @@ class SdkGatekeeperBase {
     throw _handleErrorCode(response);
   }
 
-  Future<Pagination<OrganizationEntity>> getOrganization(String token) async {
-    final url = Uri.http(authority, '/organization');
+  Future<Pagination<OrganizationEntity>> getOrganization({
+    required String token,
+    int? page,
+    int? pageSize,
+  }) async {
+    final url = Uri.http(authority, '/organization', {
+      'page': page ?? '1',
+      'pageSize': pageSize ?? '10',
+    });
     final response = await http.get(
       url,
       headers: {'Authorization': 'Bearer $token'},
@@ -174,10 +181,17 @@ class SdkGatekeeperBase {
     required String id,
   }) async {
     final url = Uri.http(authority, '/organization/$id/members');
+    log(
+      'Request body: ${json.encode(dto.toMap())}',
+      name: runtimeType.toString(),
+    );
     final response = await http.post(
       url,
-      body: dto.toMap(),
-      headers: {'Authorization': 'Bearer $token'},
+      body: json.encode(dto.toMap()),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
     );
     if (response.statusCode == HttpStatus.created) {
       return MemberEntity.fromMap(json.decode(response.body));
@@ -205,8 +219,8 @@ class SdkGatekeeperBase {
   }
 
   Exception _handleErrorCode(Response response) {
-    log('Error code: ${response.statusCode}');
-    log('Error body: ${response.body}');
+    log('Error code: ${response.statusCode}', name: runtimeType.toString());
+    log('Error body: ${response.body}', name: runtimeType.toString());
     return GatekeeperException('Error code: ${response.statusCode}');
   }
 

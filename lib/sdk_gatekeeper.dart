@@ -10,3 +10,4 @@ export 'src/entities/add_member_dto.dart';
 export 'src/entities/create_organization_dto.dart';
 export 'src/entities/organization_entity.dart';
 export 'src/entities/member_entity.dart';
+export 'src/entities/role_member_enum.dart';

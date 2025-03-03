@@ -1,14 +1,13 @@
 import 'package:sdk_gatekeeper/sdk_gatekeeper.dart';
-import 'package:sdk_gatekeeper/src/entities/organization_entity.dart';
 
 class MemberEntity {
   final String id;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? deletedAt;
-  final UserRole role;
+  final RoleMemberEnum role;
   final UserEntity user;
-  final OrganizationEntity organization;
+  final OrganizationEntity? organization;
 
   MemberEntity({
     required this.id,
@@ -28,7 +27,7 @@ class MemberEntity {
       'deletedAt': deletedAt?.toString(),
       'role': role.name,
       'user': user.toMap(),
-      'organization': organization.toMap(),
+      'organization': organization?.toMap(),
     };
   }
 
@@ -39,9 +38,12 @@ class MemberEntity {
       updatedAt: DateTime.parse(map['updatedAt']),
       deletedAt:
           map['deletedAt'] != null ? DateTime.parse(map['deletedAt']) : null,
-      role: UserRole.fromString(map['role']),
+      role: RoleMemberEnum.fromString(map['role']),
       user: UserEntity.fromJson(map['user']),
-      organization: OrganizationEntity.fromMap(map['organization']),
+      organization:
+          map['organization'] != null
+              ? OrganizationEntity.fromMap(map['organization'])
+              : null,
     );
   }
 }
