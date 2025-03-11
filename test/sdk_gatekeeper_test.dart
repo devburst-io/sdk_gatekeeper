@@ -1,5 +1,4 @@
 import 'package:sdk_gatekeeper/sdk_gatekeeper.dart';
-import 'package:sdk_gatekeeper/src/entities/user_role.dart';
 import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 import 'package:test/test.dart';
 
@@ -42,25 +41,18 @@ void main() {
     });
 
     test('login', () async {
-      final result = await sdk.login(
-        email,
-        password,
-      );
+      final result = await sdk.login(email, password);
       token = result.token;
       expect(result.token, isNotEmpty);
     });
 
     test('getProfile', () async {
-      final result = await sdk.getProfile(
-        token,
-      );
+      final result = await sdk.getProfile(token);
       expect(result.id, isNotEmpty);
     });
 
     test('getAllUsers', () async {
-      final result = sdk.getAllUsers(
-        token,
-      );
+      final result = sdk.getAllUsers(token);
       expect(result, throwsException);
     });
 
@@ -73,9 +65,7 @@ void main() {
     });
 
     test('forgotPassword', () async {
-      await sdk.forgotPassword(
-        email,
-      );
+      await sdk.forgotPassword(email);
     });
   });
 
@@ -94,41 +84,49 @@ void main() {
       );
     });
 
-    test('forgotPassword throws GatekeeperException on non-204 response',
-        () async {
-      expect(
-        () async => await sdkGatekeeper.forgotPassword('test@example.com'),
-        throwsA(isA<GatekeeperException>()),
-      );
-    });
+    test(
+      'forgotPassword throws GatekeeperException on non-204 response',
+      () async {
+        expect(
+          () async => await sdkGatekeeper.forgotPassword('test@example.com'),
+          throwsA(isA<GatekeeperException>()),
+        );
+      },
+    );
 
-    test('resetPassword throws GatekeeperException on non-204 response',
-        () async {
-      expect(
-        () async => await sdkGatekeeper.resetPassword(
-          email: 'test@example.com',
-          password: 'newpassword',
-          token: 'token',
-        ),
-        throwsA(isA<GatekeeperException>()),
-      );
-    });
+    test(
+      'resetPassword throws GatekeeperException on non-204 response',
+      () async {
+        expect(
+          () async => await sdkGatekeeper.resetPassword(
+            email: 'test@example.com',
+            password: 'newpassword',
+            token: 'token',
+          ),
+          throwsA(isA<GatekeeperException>()),
+        );
+      },
+    );
 
-    test('refreshToken throws GatekeeperException on non-201 response',
-        () async {
-      expect(
-        () async => await sdkGatekeeper.refreshToken('token'),
-        throwsA(isA<GatekeeperException>()),
-      );
-    });
+    test(
+      'refreshToken throws GatekeeperException on non-201 response',
+      () async {
+        expect(
+          () async => await sdkGatekeeper.refreshToken('token'),
+          throwsA(isA<GatekeeperException>()),
+        );
+      },
+    );
 
-    test('getAllUsers throws GatekeeperException on non-200 response',
-        () async {
-      expect(
-        () async => await sdkGatekeeper.getAllUsers('token'),
-        throwsA(isA<GatekeeperException>()),
-      );
-    });
+    test(
+      'getAllUsers throws GatekeeperException on non-200 response',
+      () async {
+        expect(
+          () async => await sdkGatekeeper.getAllUsers('token'),
+          throwsA(isA<GatekeeperException>()),
+        );
+      },
+    );
 
     test('register throws GatekeeperException on non-201 response', () async {
       final createUser = CreateUser(

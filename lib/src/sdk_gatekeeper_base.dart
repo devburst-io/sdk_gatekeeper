@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -18,14 +19,17 @@ import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 
 class SdkGatekeeperBase {
   final String authority;
+  static const Duration _timeout = Duration(seconds: 2);
 
   SdkGatekeeperBase(this.authority);
   Future<TokenResponse> login(String email, String password) async {
     final url = Uri.http(authority, '/auth');
-    final response = await http.post(
-      url,
-      body: {'email': email, 'password': await _encriptede(password)},
-    );
+    final response = await http
+        .post(
+          url,
+          body: {'email': email, 'password': await _encriptede(password)},
+        )
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.created) {
       return TokenResponse.fromJson(json.decode(response.body));
     }
@@ -34,7 +38,9 @@ class SdkGatekeeperBase {
 
   Future<void> forgotPassword(String email) async {
     final url = Uri.http(authority, '/auth/forgot-password');
-    final response = await http.post(url, body: {'email': email});
+    final response = await http
+        .post(url, body: {'email': email})
+        .timeout(_timeout);
     if (response.statusCode != HttpStatus.noContent) {
       throw _handleErrorCode(response);
     }
@@ -46,11 +52,13 @@ class SdkGatekeeperBase {
     required String token,
   }) async {
     final url = Uri.http(authority, '/auth/reset-password');
-    final response = await http.post(
-      url,
-      body: {'email': email, 'password': await _encriptede(password)},
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .post(
+          url,
+          body: {'email': email, 'password': await _encriptede(password)},
+          headers: {'Authorization': 'Bearer $token'},
+        )
+        .timeout(_timeout);
     if (response.statusCode != HttpStatus.noContent) {
       throw _handleErrorCode(response);
     }
@@ -58,10 +66,9 @@ class SdkGatekeeperBase {
 
   Future<TokenResponse> refreshToken(String token) async {
     final url = Uri.http(authority, '/auth/refresh');
-    final response = await http.post(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .post(url, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.created) {
       return TokenResponse.fromJson(json.decode(response.body));
     }
@@ -70,10 +77,9 @@ class SdkGatekeeperBase {
 
   Future<Pagination<UserEntity>> getAllUsers(String token) async {
     final url = Uri.http(authority, '/users');
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .get(url, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return Pagination.fromJson(
         json.decode(response.body),
@@ -86,7 +92,9 @@ class SdkGatekeeperBase {
   Future<UserEntity> register(CreateUser createUser) async {
     createUser.password = await _encriptede(createUser.password);
     final url = Uri.http(authority, '/users');
-    final response = await http.post(url, body: createUser.toJson());
+    final response = await http
+        .post(url, body: createUser.toJson())
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.created) {
       return UserEntity.fromJson(json.decode(response.body));
     }
@@ -95,10 +103,9 @@ class SdkGatekeeperBase {
 
   Future<UserEntity> getProfile(String token) async {
     final url = Uri.http(authority, '/users/me');
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .get(url, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return UserEntity.fromJson(json.decode(response.body));
     }
@@ -110,11 +117,13 @@ class SdkGatekeeperBase {
     required String token,
   }) async {
     final url = Uri.http(authority, '/organization');
-    final response = await http.post(
-      url,
-      body: dto.toMap(),
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .post(
+          url,
+          body: dto.toMap(),
+          headers: {'Authorization': 'Bearer $token'},
+        )
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.created) {
       return OrganizationEntity.fromMap(json.decode(response.body));
     }
@@ -130,10 +139,9 @@ class SdkGatekeeperBase {
       'page': page ?? '1',
       'pageSize': pageSize ?? '10',
     });
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .get(url, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return Pagination.fromJson(
         json.decode(response.body),
@@ -148,10 +156,9 @@ class SdkGatekeeperBase {
     String id,
   ) async {
     final url = Uri.http(authority, '/organization/$id');
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .get(url, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return OrganizationEntity.fromMap(json.decode(response.body));
     }
@@ -164,11 +171,9 @@ class SdkGatekeeperBase {
     required Map<String, dynamic> body,
   }) async {
     final url = Uri.http(authority, '/organization/$id');
-    final response = await http.patch(
-      url,
-      body: body,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .patch(url, body: body, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return OrganizationEntity.fromMap(json.decode(response.body));
     }
@@ -185,14 +190,16 @@ class SdkGatekeeperBase {
       'Request body: ${json.encode(dto.toMap())}',
       name: runtimeType.toString(),
     );
-    final response = await http.post(
-      url,
-      body: json.encode(dto.toMap()),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    final response = await http
+        .post(
+          url,
+          body: json.encode(dto.toMap()),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        )
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.created) {
       return MemberEntity.fromMap(json.decode(response.body));
     }
@@ -208,10 +215,9 @@ class SdkGatekeeperBase {
       authority,
       '/organization/$idOrganization/members/$id',
     );
-    final response = await http.delete(
-      url,
-      headers: {'Authorization': 'Bearer $token'},
-    );
+    final response = await http
+        .delete(url, headers: {'Authorization': 'Bearer $token'})
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.noContent) {
       return;
     }
@@ -221,22 +227,35 @@ class SdkGatekeeperBase {
   Exception _handleErrorCode(Response response) {
     log('Error code: ${response.statusCode}', name: runtimeType.toString());
     log('Error body: ${response.body}', name: runtimeType.toString());
-    return GatekeeperException('Error code: ${response.statusCode}');
+    return GatekeeperException(_getErrorMessage(response));
+  }
+
+  String _getErrorMessage(Response response) {
+    try {
+      final body = json.decode(response.body);
+      return body['message'];
+    } catch (e) {
+      return 'Error code: ${response.statusCode}';
+    }
   }
 
   Future<String> _encriptede(String password) async {
-    final keyString = await _getPublicKey();
-    final publicKey = RSAKeyParser().parse(keyString) as RSAPublicKey;
-    final encrypter = Encrypter(
-      RSA(publicKey: publicKey, encoding: RSAEncoding.OAEP),
-    );
+    try {
+      final keyString = await _getPublicKey();
+      final publicKey = RSAKeyParser().parse(keyString) as RSAPublicKey;
+      final encrypter = Encrypter(
+        RSA(publicKey: publicKey, encoding: RSAEncoding.OAEP),
+      );
 
-    return encrypter.encrypt(password).base64;
+      return encrypter.encrypt(password).base64;
+    } on TimeoutException {
+      throw GatekeeperException('Timeout ao tentar encriptar a senha');
+    }
   }
 
   Future<String> _getPublicKey() async {
     final url = Uri.http(authority, '/auth/config/pub');
-    final response = await http.get(url);
+    final response = await http.get(url).timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return response.body;
     }
