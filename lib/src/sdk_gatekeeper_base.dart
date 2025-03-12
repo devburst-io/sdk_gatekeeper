@@ -18,12 +18,12 @@ import 'package:sdk_gatekeeper/src/entities/user_entity.dart';
 import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 
 class SdkGatekeeperBase {
-  final String authority;
+  final String _url;
   static const Duration _timeout = Duration(seconds: 2);
 
-  SdkGatekeeperBase(this.authority);
+  SdkGatekeeperBase(this._url);
   Future<TokenResponse> login(String email, String password) async {
-    final url = Uri.http(authority, '/auth');
+    final url = Uri.parse('$_url/auth');
     final response = await http
         .post(
           url,
@@ -37,7 +37,7 @@ class SdkGatekeeperBase {
   }
 
   Future<void> forgotPassword(String email) async {
-    final url = Uri.http(authority, '/auth/forgot-password');
+    final url = Uri.parse('$_url/auth/forgot-password');
     final response = await http
         .post(url, body: {'email': email})
         .timeout(_timeout);
@@ -51,7 +51,7 @@ class SdkGatekeeperBase {
     required String password,
     required String token,
   }) async {
-    final url = Uri.http(authority, '/auth/reset-password');
+    final url = Uri.parse('$_url/auth/reset-password');
     final response = await http
         .post(
           url,
@@ -65,7 +65,7 @@ class SdkGatekeeperBase {
   }
 
   Future<TokenResponse> refreshToken(String token) async {
-    final url = Uri.http(authority, '/auth/refresh');
+    final url = Uri.parse('$_url/auth/refresh');
     final response = await http
         .post(url, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -76,7 +76,7 @@ class SdkGatekeeperBase {
   }
 
   Future<Pagination<UserEntity>> getAllUsers(String token) async {
-    final url = Uri.http(authority, '/users');
+    final url = Uri.parse('$_url/users');
     final response = await http
         .get(url, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -91,7 +91,7 @@ class SdkGatekeeperBase {
 
   Future<UserEntity> register(CreateUser createUser) async {
     createUser.password = await _encriptede(createUser.password);
-    final url = Uri.http(authority, '/users');
+    final url = Uri.parse('$_url/users');
     final response = await http
         .post(url, body: createUser.toJson())
         .timeout(_timeout);
@@ -102,7 +102,7 @@ class SdkGatekeeperBase {
   }
 
   Future<UserEntity> getProfile(String token) async {
-    final url = Uri.http(authority, '/users/me');
+    final url = Uri.parse('$_url/users/me');
     final response = await http
         .get(url, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -116,7 +116,7 @@ class SdkGatekeeperBase {
     required CreateOrganizationDto dto,
     required String token,
   }) async {
-    final url = Uri.http(authority, '/organization');
+    final url = Uri.parse('$_url/organization');
     final response = await http
         .post(
           url,
@@ -132,13 +132,11 @@ class SdkGatekeeperBase {
 
   Future<Pagination<OrganizationEntity>> getOrganization({
     required String token,
-    int? page,
-    int? pageSize,
+    int page = 1,
+    int pageSize = 10,
   }) async {
-    final url = Uri.http(authority, '/organization', {
-      'page': page ?? '1',
-      'pageSize': pageSize ?? '10',
-    });
+    final url = Uri.parse('$_url/organization?page=$page&pageSize=$pageSize');
+
     final response = await http
         .get(url, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -155,7 +153,7 @@ class SdkGatekeeperBase {
     String token,
     String id,
   ) async {
-    final url = Uri.http(authority, '/organization/$id');
+    final url = Uri.parse('$_url/organization/$id');
     final response = await http
         .get(url, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -170,7 +168,7 @@ class SdkGatekeeperBase {
     required String id,
     required Map<String, dynamic> body,
   }) async {
-    final url = Uri.http(authority, '/organization/$id');
+    final url = Uri.parse('$_url/organization/$id');
     final response = await http
         .patch(url, body: body, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -185,7 +183,7 @@ class SdkGatekeeperBase {
     required String token,
     required String id,
   }) async {
-    final url = Uri.http(authority, '/organization/$id/members');
+    final url = Uri.parse('$_url/organization/$id/members');
     log(
       'Request body: ${json.encode(dto.toMap())}',
       name: runtimeType.toString(),
@@ -211,10 +209,7 @@ class SdkGatekeeperBase {
     required String id,
     required String idOrganization,
   }) async {
-    final url = Uri.http(
-      authority,
-      '/organization/$idOrganization/members/$id',
-    );
+    final url = Uri.parse('$_url/organization/$idOrganization/members/$id');
     final response = await http
         .delete(url, headers: {'Authorization': 'Bearer $token'})
         .timeout(_timeout);
@@ -254,7 +249,7 @@ class SdkGatekeeperBase {
   }
 
   Future<String> _getPublicKey() async {
-    final url = Uri.http(authority, '/auth/config/pub');
+    final url = Uri.parse('$_url/auth/config/pub');
     final response = await http.get(url).timeout(_timeout);
     if (response.statusCode == HttpStatus.ok) {
       return response.body;

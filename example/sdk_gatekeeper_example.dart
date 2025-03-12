@@ -1,7 +1,7 @@
 import 'package:sdk_gatekeeper/sdk_gatekeeper.dart';
 
 void main() {
-  final sdk = SdkGatekeeperBase('localhost:3000');
+  final sdk = SdkGatekeeperBase('http://localhost');
   sdk.register(
     CreateUser(
       name: 'test',

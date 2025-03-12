@@ -1,5 +1,4 @@
 import 'package:sdk_gatekeeper/sdk_gatekeeper.dart';
-import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 import 'package:test/test.dart';
 
 void main() {
