@@ -47,16 +47,20 @@ class SdkGatekeeperBase {
   }
 
   Future<void> resetPassword({
-    required String email,
+    required String tokenEmail,
     required String password,
-    required String token,
   }) async {
     final url = Uri.parse('$_url/auth/reset-password');
+    final body = {
+      'token': tokenEmail,
+      'newPassword': await _encriptede(password),
+    };
+    log('Request body: ${json.encode(body)}', name: runtimeType.toString());
     final response = await http
         .post(
           url,
-          body: {'email': email, 'password': await _encriptede(password)},
-          headers: {'Authorization': 'Bearer $token'},
+          body: json.encode(body),
+          headers: {'Content-Type': 'application/json'},
         )
         .timeout(_timeout);
     if (response.statusCode != HttpStatus.noContent) {
@@ -228,6 +232,9 @@ class SdkGatekeeperBase {
   String _getErrorMessage(Response response) {
     try {
       final body = json.decode(response.body);
+      if (body['message'] is List) {
+        return body['message'].join('\n');
+      }
       return body['message'];
     } catch (e) {
       return 'Error code: ${response.statusCode}';

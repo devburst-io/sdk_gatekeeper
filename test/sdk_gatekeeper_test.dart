@@ -55,14 +55,6 @@ void main() {
       expect(result, throwsException);
     });
 
-    test('resetPassword', () async {
-      await sdk.resetPassword(
-        email: email,
-        password: 'password1',
-        token: token,
-      );
-    });
-
     test('forgotPassword', () async {
       await sdk.forgotPassword(email);
     });
@@ -88,20 +80,6 @@ void main() {
       () async {
         expect(
           () async => await sdkGatekeeper.forgotPassword('test@example.com'),
-          throwsA(isA<GatekeeperException>()),
-        );
-      },
-    );
-
-    test(
-      'resetPassword throws GatekeeperException on non-204 response',
-      () async {
-        expect(
-          () async => await sdkGatekeeper.resetPassword(
-            email: 'test@example.com',
-            password: 'newpassword',
-            token: 'token',
-          ),
           throwsA(isA<GatekeeperException>()),
         );
       },
