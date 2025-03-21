@@ -7,7 +7,6 @@ import 'package:encrypt/encrypt.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:pointycastle/asymmetric/api.dart';
-import 'package:sdk_gatekeeper/src/entities/accept_invite_organization.dart';
 import 'package:sdk_gatekeeper/src/entities/add_member_dto.dart';
 import 'package:sdk_gatekeeper/src/entities/create_organization_dto.dart';
 import 'package:sdk_gatekeeper/src/entities/create_user_dto.dart';
@@ -183,28 +182,17 @@ class SdkGatekeeperBase {
     throw _handleErrorCode(response);
   }
 
-  Future<AcceptInviteDto> acceptInvite({required String token}) async {
+  Future<void> acceptInvite({required String token}) async {
     final url = Uri.parse('$_url/organization/invitations/accept');
 
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'token': token}),
-      );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'token': token}),
+    );
 
-      switch (response.statusCode) {
-        case HttpStatus.ok:
-          return AcceptInviteDto.success();
-        case HttpStatus.unauthorized:
-          return AcceptInviteDto.unauthorized();
-        case HttpStatus.badRequest:
-          return AcceptInviteDto.invalidToken();
-        default:
-          throw _handleErrorCode(response);
-      }
-    } catch (e) {
-      rethrow;
+    if (response.statusCode != HttpStatus.noContent) {
+      throw _handleErrorCode(response);
     }
   }
 
