@@ -182,6 +182,20 @@ class SdkGatekeeperBase {
     throw _handleErrorCode(response);
   }
 
+  Future<void> acceptInvite({required String token}) async {
+    final url = Uri.parse('$_url/organization/invitations/accept');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'token': token}),
+    );
+
+    if (response.statusCode != HttpStatus.noContent) {
+      throw _handleErrorCode(response);
+    }
+  }
+
   Future<MemberEntity> addMember({
     required AddMemberDto dto,
     required String token,
