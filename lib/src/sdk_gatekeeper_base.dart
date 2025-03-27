@@ -19,7 +19,7 @@ import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 
 class SdkGatekeeperBase {
   final String _url;
-  static const Duration _timeout = Duration(seconds: 2);
+  static const Duration _timeout = Duration(seconds: 5);
 
   SdkGatekeeperBase(this._url);
   Future<TokenResponse> login(String email, String password) async {
