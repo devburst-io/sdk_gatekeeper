@@ -98,7 +98,7 @@ class SdkGatekeeperBase {
     final url = Uri.parse('$_url/users');
     final response = await http
         .post(url, body: createUser.toJson())
-        .timeout(_timeout);
+        .timeout(Duration(seconds: 5));
     if (response.statusCode == HttpStatus.created) {
       return UserEntity.fromJson(json.decode(response.body));
     }
