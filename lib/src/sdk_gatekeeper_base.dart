@@ -19,7 +19,7 @@ import 'package:sdk_gatekeeper/src/gatekeeper_exception.dart';
 
 class SdkGatekeeperBase {
   final String _url;
-  static const Duration _timeout = Duration(seconds: 2);
+  static const Duration _timeout = Duration(seconds: 5);
 
   SdkGatekeeperBase(this._url);
   Future<TokenResponse> login(String email, String password) async {
@@ -98,7 +98,7 @@ class SdkGatekeeperBase {
     final url = Uri.parse('$_url/users');
     final response = await http
         .post(url, body: createUser.toJson())
-        .timeout(Duration(seconds: 5));
+        .timeout(_timeout);
     if (response.statusCode == HttpStatus.created) {
       return UserEntity.fromJson(json.decode(response.body));
     }
